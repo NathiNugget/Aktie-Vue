@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,26 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="app">
         <!-- Code here! -->
         <h1>Kokain på en mandag!</h1>
+        <ul>
+            <li v-for="aktie in Aktier" >
+                <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}</p>
+            </li>
+        </ul>
 
-
+        <select v-model="IndexChosen" >
+            <option value="" disabled>Vælg venligst en aktie</option>
+            <option v-for="(aktie, index) in Aktier" :key="index" :value="index">
+                {{aktie.Navn}}
+            </option>
+        </select>
+        <input type="number" v-model="SelectedAmount" @input="() => {if(SelectedAmount > 300 || 0 > SelectedAmount){SelectedAmount = 150}}">
+        {{SelectedAmount}}
+        <p v-if="IndexChosen != -1">{{SumAfKoeb}}DKK</p>
 
 
 
@@ -24,4 +39,5 @@
 
     <script src="index.js"></script>
 </body>
+
 </html>
