@@ -1,4 +1,17 @@
 h1 {
     font-family: Comic Sans MS, Comic Sans, cursive;
-    
+}
+
+h2{
+    font-family: Consolas monaco monospace;
+}
+
+html {
+    background-color: black;
+}
+#app {
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #505050;
+    color: white;
 }

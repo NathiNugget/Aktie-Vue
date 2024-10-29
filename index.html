@@ -12,12 +12,20 @@
 <body>
     <div id="app">
         <!-- Code here! -->
-        <h1>Kokain på en mandag!</h1>
+        <h1>Gifler på en mandag!</h1>
+        <h2>Herunder ser du en oversigt over aktier der kan handles på NuggetBørsen</h2>
         <ul>
             <li v-for="aktie in Aktier" >
                 <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}</p>
             </li>
         </ul>
+
+        <label>Køb</label>
+        <input type="radio" value="Køb" v-model="TransactionMode">
+        <label>Salg</label>
+        <input type="radio" value="Salg" v-model="TransactionMode">
+
+
 
         <select v-model="IndexChosen" >
             <option value="" disabled>Vælg venligst en aktie</option>
