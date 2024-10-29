@@ -12,35 +12,94 @@
 <body>
     <div id="app">
         <!-- Code here! -->
-        <h1>Gifler på en mandag!</h1>
+        <h1>Gifler på en mandag! <br>Velkommen til NuggetBørsen!</h1>
         <h2>Herunder ser du en oversigt over aktier der kan handles på NuggetBørsen</h2>
         <ul>
-            <li v-for="aktie in Aktier" >
-                <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}</p>
-            </li>
+            <div v-for="aktie in Aktier">
+                <li v-if="aktie.Antal != 0">
+                    <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}, Antal: {{aktie.Antal}}</p>
+                </li>
+            </div>
+            
         </ul>
 
-        <label>Køb</label>
-        <input type="radio" value="Køb" v-model="TransactionMode">
-        <label>Salg</label>
-        <input type="radio" value="Salg" v-model="TransactionMode">
+        <table>
+            <thead>
+                <th>Køb</th>
+                <th>Salg</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="radio" value="Køb" v-model="TransactionMode">
+                    </td>
+                    <td>
+                        <input type="radio" value="Salg" v-model="TransactionMode">
+                    </td>
+                    
+                   
+                </tr>
+                
+            </tbody>
+        </table>
+        
+        
+
+
+        <div v-show="TransactionMode != null" :class="ClassForTransaction">
+            <label v-if="TransactionMode == 'Køb'">Vælg venligst en aktie du vil købe</label>
+            <label v-else>Vælg venligst en aktie du vil sælge</label>
+            <br>
+            <select v-model="IndexChosen" >
+                
+                <option v-for="(aktie, index) in Aktier" :key="index" :value="index">
+                    {{aktie.Navn}}
+                </option>
+            </select>
+            <input type="number" v-model="SelectedAmount" @input="() => {if(SelectedAmount > 300 || 0 > SelectedAmount){SelectedAmount = 150} else if (SelectedAmount > Aktier[IndexChosen].Antal && TransactionMode == 'Køb'){SelectedAmount = Aktier[IndexChosen].Antal}}">
+            
+            <p v-if="IndexChosen != -1">{{SumAfKoeb}}DKK</p>
+            <br>
+            {{TransactionMode}}
+            <template v-if="TransactionMode == 'Køb'">
+                <button @click="ProcessTransaction()">
+                    Køb aktier!
+                </button>
+            </template>
+                
+            <template v-else-if="TransactionMode == 'Salg'">
+                <button @click="ProcessTransaction()">
+                    Sælg aktier!
+                </button>
+            </template>
+
+
+        </div>
+
+        <div>
+            <h3>Aktie-historik herunder:</h3>
+            <br>
+            <div v-for="(trans, index) in Transaktioner" :class="TransactionClass(index)">
+                <p>
+                    Transaktion #{{index+1}}
+                    
+                </p>
+                <p v-if="trans.Mode == 'Køb'">
+                    Pris pr. stk.: {{trans.Koebspris}}, total pris: {{trans.Koebspris * trans.Antal}} betalt
+
+                </p>
+                <p v-if="trans.Mode == 'Salg'">
+                    Pris: {{trans.Salgspris}}, total pris: {{trans.Salgspris * trans.Antal}} modtaget
+                </p>
+                
+            </div>
+        </div>
+
+       
 
 
 
-        <select v-model="IndexChosen" >
-            <option value="" disabled>Vælg venligst en aktie</option>
-            <option v-for="(aktie, index) in Aktier" :key="index" :value="index">
-                {{aktie.Navn}}
-            </option>
-        </select>
-        <input type="number" v-model="SelectedAmount" @input="() => {if(SelectedAmount > 300 || 0 > SelectedAmount){SelectedAmount = 150}}">
-        {{SelectedAmount}}
-        <p v-if="IndexChosen != -1">{{SumAfKoeb}}DKK</p>
-
-
-
-
-
+        
 
         <!-- But before the end of this -->
     </div>

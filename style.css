@@ -6,12 +6,34 @@ h2{
     font-family: Consolas monaco monospace;
 }
 
+
+
 html {
-    background-color: black;
+    background-color: rgba(126, 100, 67, 0.938);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: #FC0 1px 0 5px;
 }
 #app {
     border-radius: 10px;
     padding: 5px;
     background-color: #505050;
     color: white;
+    box-shadow: 0px 0px 50px 20px hsl(192, 59%, 41%);
+    td {
+        
+        justify-items: center;
+    }
+
+    .saleClass{
+        background-color: green;
+        
+    }
+
+    .buyClass {
+        background-color: red;
+    }
+
+    [class$="Class"]{
+        box-shadow: 0 0 20px 1px cyan;
+    }
 }
