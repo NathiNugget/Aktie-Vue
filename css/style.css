@@ -1,0 +1,77 @@
+h1 {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+
+    
+
+}
+h1:hover {
+    margin: 10px;
+    width: 100px;
+    height: 100px;
+    
+    animation-name: spin;
+    animation-duration: 500ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    
+}
+
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+h2 {
+    font-family: Consolas monaco monospace;
+}
+
+
+
+html {
+    background-color: rgba(126, 100, 67, 0.938);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-shadow: #FC0 1px 0 5px;
+}
+
+#app {
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #505050;
+    color: white;
+    box-shadow: 0px 0px 50px 20px hsl(192, 59%, 41%);
+
+    td {
+
+        justify-items: center;
+    }
+
+    .saleClass {
+        background-color: green;
+        box-shadow: 0 0 20px 1px cyan;
+    }
+
+
+
+
+    .buyClass {
+        background-color: red;
+        box-shadow: 0 0 20px 1px cyan;
+    }
+
+    .buyTransactionClass {
+        background-color: rgba(255, 0, 0, 0.24);
+        box-shadow: 0 0 10px 2px goldenrod;
+    }
+
+    .saleTransactionClass {
+        background-color: rgba(0, 128, 0, 0.438);
+        box-shadow: 0 0 10px 2px goldenrod;
+    }
+
+
+    button:disabled {
+        font-family: 'KAPizza.ttf';
+    }
+
+
+}

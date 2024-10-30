@@ -6,18 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div id="app">
         <!-- Code here! -->
-        <h1>Gifler på en mandag! <br>Velkommen til NuggetBørsen!</h1>
-        <h2>Herunder ser du en oversigt over aktier der kan handles på NuggetBørsen</h2>
+        <h1>Risengrød er for vildt<br>Velkommen til NuggetBørsen!</h1>
+        <h2>Herunder ser du en oversigt over aktier der er åbne for handel på NuggetBørsen</h2>
         <ul>
             <div v-for="aktie in Aktier">
                 <li v-if="aktie.Antal != 0">
-                    <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}, Antal: {{aktie.Antal}}</p>
+                    <p>{{aktie.Navn}}, Koebspris: {{aktie.Koebspris}}, Salgspris: {{aktie.Salgspris}}, Antal: {{aktie.Antal}}, Totalt index: {{aktie.Antal*aktie.Koebspris}}</p>
                 </li>
             </div>
             
@@ -51,24 +51,27 @@
             <label v-else>Vælg venligst en aktie du vil sælge</label>
             <br>
             <select v-model="IndexChosen" >
-                
-                <option v-for="(aktie, index) in Aktier" :key="index" :value="index">
+                <option v-if="TransactionMode == 'Køb'" v-for="(aktie, index) in Aktier" :key="index" :value="index" :disabled="false">
                     {{aktie.Navn}}
                 </option>
+                <option v-if="TransactionMode == 'Salg'" v-for="(aktie, index) in Aktier" :key="index" :value="index" :disabled="CanSell(index)">
+                    {{aktie.Navn}}
+                </option>
+                
             </select>
-            <input type="number" v-model="SelectedAmount" @input="() => {if(SelectedAmount > 300 || 0 > SelectedAmount){SelectedAmount = 150} else if (SelectedAmount > Aktier[IndexChosen].Antal && TransactionMode == 'Køb'){SelectedAmount = Aktier[IndexChosen].Antal}}">
+            <input type="number" v-model="SelectedAmount" @input="() => {if (SelectedAmount > Aktier[IndexChosen].Antal && TransactionMode == 'Køb'){SelectedAmount = Aktier[IndexChosen].Antal} else if (TransactionMode == 'Salg' && SelectedAmount > Portfolie.get(Aktier[IndexChosen].Navn)){SelectedAmount = Portfolie.get(Aktier[IndexChosen].Navn)}}">
             
             <p v-if="IndexChosen != -1">{{SumAfKoeb}}DKK</p>
             <br>
             {{TransactionMode}}
             <template v-if="TransactionMode == 'Køb'">
-                <button @click="ProcessTransaction()">
+                <button @click="ProcessTransaction()" :disabled="CanBuy(IndexChosen)">
                     Køb aktier!
                 </button>
             </template>
                 
             <template v-else-if="TransactionMode == 'Salg'">
-                <button @click="ProcessTransaction()">
+                <button @click="ProcessTransaction()" :disabled="CanSell(IndexChosen)">
                     Sælg aktier!
                 </button>
             </template>
@@ -76,22 +79,85 @@
 
         </div>
 
+        <h5>
+            Hvilke transaktioner vil du se? 
+        </h5>
+        <table>
+            <thead>
+                <th>Køb</th>
+                <th>Salg</th>
+                <th>Alle</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="radio" value="Køb" v-model="TransaktionsView">
+                    </td>
+                    <td>
+                        <input type="radio" value="Salg" v-model="TransaktionsView">
+                    </td>
+                    <td>
+                        <input type="radio" value="Alle" v-model="TransaktionsView">
+                    </td>
+                    
+                    
+                   
+                </tr>
+                
+            </tbody>
+        </table>
+
         <div>
             <h3>Aktie-historik herunder:</h3>
+            <p v-if="TotalSkat != 0">Du skal nu i alt betale: {{TotalSkat.toFixed(2)}}DKK i Skat</p>
             <br>
             <div v-for="(trans, index) in Transaktioner" :class="TransactionClass(index)">
-                <p>
-                    Transaktion #{{index+1}}
-                    
-                </p>
-                <p v-if="trans.Mode == 'Køb'">
-                    Pris pr. stk.: {{trans.Koebspris}}, total pris: {{trans.Koebspris * trans.Antal}} betalt
-
-                </p>
-                <p v-if="trans.Mode == 'Salg'">
-                    Pris: {{trans.Salgspris}}, total pris: {{trans.Salgspris * trans.Antal}} modtaget
-                </p>
                 
+                
+                <template v-if="TransaktionsView == 'Alle'">
+                    <p>
+                        Transaktion #{{index+1}}, {{trans.Navn}}
+                        
+                    </p>
+                    <p v-if="trans.Mode == 'Køb'">
+                        Pris pr. stk.: {{trans.Koebspris}}, total pris: {{trans.Koebspris * trans.Antal}} betalt
+                        
+                    </p>
+                    <p v-if="trans.Mode == 'Salg'">
+                        Pris: {{trans.Salgspris}}, total pris: {{trans.Salgspris * trans.Antal}} modtaget
+                    </p>
+                    <p>
+                        Saldo: {{trans.Saldo}}
+                    </p>
+                </template>
+
+                <!-- The template below is for purchases -->
+                <template v-if="TransaktionsView == 'Køb'">
+                    <p v-if="trans.Mode == 'Køb'">
+                        Transaktion #{{index+1}}, {{trans.Navn}}
+                    </p>
+                    <p v-if="trans.Mode == 'Køb'">
+                        Pris pr. stk.: {{trans.Koebspris}}, total pris: {{trans.Koebspris * trans.Antal}} betalt
+                        
+                    </p>
+                    <p v-if="trans.Mode == 'Køb'">
+                        Saldo: {{trans.Saldo}}
+                    </p>
+                </template>
+
+                <!-- The template below is for sales -->
+                <template v-if="TransaktionsView == 'Salg'">
+                    <p v-if="trans.Mode == 'Salg'">
+                        Transaktion #{{index+1}}, {{trans.Navn}}
+                    </p>
+                    <p v-if="trans.Mode == 'Salg'">
+                        Pris pr. stk.: {{trans.Koebspris}}, total pris: {{trans.Koebspris * trans.Antal}} betalt
+                        
+                    </p>
+                    <p v-if="trans.Mode == 'Salg'">
+                        Saldo: {{trans.Saldo}}
+                    </p>
+                </template>
             </div>
         </div>
 
@@ -104,7 +170,7 @@
         <!-- But before the end of this -->
     </div>
 
-    <script src="index.js"></script>
+    <script src="js/index.js"></script>
 </body>
 
 </html>
