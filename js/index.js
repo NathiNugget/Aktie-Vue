@@ -55,6 +55,7 @@ const app = Vue.createApp({
       MaxStocks: 200,
       TransactionMode: null, 
       TransaktionsView: 'Alle',
+      TransaktionsNavneFilter: 'Alle',
       Transaktioner: [],
       Portfolie: new Map(),
 
@@ -103,7 +104,7 @@ const app = Vue.createApp({
     },
 
     TransactionClass(index){
-      if (Vue.toRaw(this.Transaktioner[index].Mode) == 'Køb') return 'buyTransactionClass'; 
+      if (Vue.toRaw(this.TransaktionerFiltreret[index].Mode) == 'Køb') return 'buyTransactionClass'; 
       return 'saleTransactionClass';  
     },
     CanSell(index){
@@ -120,6 +121,8 @@ const app = Vue.createApp({
       
       return !(this.Portfolie.get('Saldo') >= this.Aktier[index].Koebspris * this.SelectedAmount && this.SelectedAmount > 0)
     }
+
+
 
   },
 
@@ -140,6 +143,23 @@ const app = Vue.createApp({
       const lowTax = 0.27*67000; 
       return lowTax + highTax; 
       
+    },
+    SetAfNavne() {
+      const a = this.Transaktioner;
+      let setToReturn = new Set(); 
+      for (let index = 0; index < a.length; index++) {
+        let element = a[index].Navn
+        setToReturn.add(element); 
+      }
+      return setToReturn; 
+    },
+
+    TransaktionerFiltreret() {
+      if (this.TransaktionsNavneFilter == "Alle") return this.Transaktioner; 
+
+      const beforeCollection = collect(this.Transaktioner);
+      const filtered = Vue.toRaw(beforeCollection).where('Navn', this.TransaktionsNavneFilter);
+      return filtered.all();
     }
     
   },

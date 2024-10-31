@@ -107,11 +107,30 @@
             </tbody>
         </table>
 
+        <table>
+            <thead>
+                <th v-for="navne in SetAfNavne">{{navne}}</th>
+                <th>Alle</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td v-for="navne in SetAfNavne">
+                        <input type="radio" :value="navne" v-model="TransaktionsNavneFilter">
+                    </td>
+                    <td>
+                        <input type="radio" value="Alle" v-model="TransaktionsNavneFilter">
+                    </td>
+                    
+                </tr>
+                
+            </tbody>
+        </table>
+        <p>{{TransaktionsNavneFilter}}</p>
         <div>
             <h3>Aktie-historik herunder:</h3>
             <p v-if="TotalSkat != 0">Du skal nu i alt betale: {{TotalSkat.toFixed(2)}}DKK i Skat</p>
             <br>
-            <div v-for="(trans, index) in Transaktioner" :class="TransactionClass(index)">
+            <div v-for="(trans, index) in TransaktionerFiltreret" :class="TransactionClass(index)">
                 
                 
                 <template v-if="TransaktionsView == 'Alle'">
@@ -169,7 +188,7 @@
 
         <!-- But before the end of this -->
     </div>
-
+    <script src="js/collect.min.js"></script>
     <script src="js/index.js"></script>
 </body>
 
