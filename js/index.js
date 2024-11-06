@@ -1,3 +1,24 @@
+// import "../dist/main.js"
+
+import "../js/axios.min.js";
+
+
+async function doSomething(){
+  const response = await axios({
+    method: 'GET', 
+    url: 'https://catfact.ninja/fact',
+    
+  }).then(
+    function x(response) {
+    console.log(response.data.fact);
+    }
+  ); 
+  return response;
+}
+
+doSomething();
+
+
 class Transaction {
   constructor(Mode, Navn, Koebspris, Salgspris, Antal){
     this.Mode = Mode;
@@ -166,3 +187,4 @@ const app = Vue.createApp({
 })
 
 app.mount('#app')
+
